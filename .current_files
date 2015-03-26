@@ -1,0 +1,1 @@
+vim -p lib/*/*.pm* t/*.t*

@@ -1,0 +1,2 @@
+prove t/parse.t
+prove --exec perl6 t/parse.t6
