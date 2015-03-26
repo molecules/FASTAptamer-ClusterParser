@@ -57,15 +57,34 @@ module FASTAptamer::ClusterParser
     sub cluster_table_for ( @filenames) is export
     {
         my $reference_filename = @filenames[0];
-        my @other_filenames  = @filenames[1 .. *];
+        my @other_filenames    = @filenames[1 .. *];
+
         my @basenames = basenames( @filenames);
-        my $table = ('seed sequence',@basenames).join("\t") ~ "\n";
+
+        # Start building up table
+        my $table = table_header_for(@basenames);
     
-        my $ref_cluster = extract_cluster_info($reference_filename);
-        my @other_clusters = @other_filenames.map( {extract_cluster_info($_)} );
-        my @ref_seqs = sorted_cluster_seqs($ref_cluster);
-        my @other_seqs = sorted_cluster_seqs($_) for @other_clusters;
-        my @extra_seqs = @other_seqs (-) @ref_seqs;
+        my $ref_cluster    = extract_cluster_info($reference_filename);
+
+        my @other_clusters;
+
+        for @other_filenames -> $filename 
+        {
+            push @other_clusters,  extract_cluster_info($filename);
+        }
+
+        my @ref_seqs   = sorted_cluster_seqs($ref_cluster);
+
+        my @other_seqs;
+        for @other_clusters -> $cluster
+        {
+            push @other_seqs, sorted_cluster_seqs($cluster);
+        }
+
+        @other_seqs.=unique;
+
+
+        my @extra_seqs = ( @other_seqs (-) @ref_seqs ).list;
     
         for (@ref_seqs, @extra_seqs) -> $seq
         {
@@ -80,6 +99,16 @@ module FASTAptamer::ClusterParser
             $table ~= "\n";
         }
         return $table;
+    }
+
+    sub table_header_for (@names)
+    {
+        return ('seed sequence',@names).join("\t") ~ "\n";
+    }
+
+    sub diagnostic ($message, $var)
+    {
+        say "$message ( $var.perl() )";
     }
     
     sub sorted_cluster_seqs ( $cluster )

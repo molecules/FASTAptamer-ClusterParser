@@ -10,6 +10,8 @@ chdir 't/data';
 
 create_file('A.cluster.fa');
 
+delete_file_if_exists('H.cluster.fa');
+
 {
     my @filenames          = < howdy.1.abc.txt bye.2.abc.txt>;
     my @expected_basenames = <howdy bye>;
@@ -47,13 +49,16 @@ create_file('A.cluster.fa');
     is_deeply($result, $expected, 'Extracted item info');
 }
 
+create_file('H.cluster.fa');
+
 {
-    my $expected = text('cluster_table');
-    my @filenames = ('A.cluster.fa', 'G.cluster.fa');
-    my $result = cluster_table_for( @filenames );
-    is($result, $expected, 'Created cluster table for A and G cluster files');
+    my $expected  = text('cluster_table');
+    my @filenames = ('A.cluster.fa', 'G.cluster.fa', 'H.cluster.fa');
+    my $result    = cluster_table_for( @filenames );
+    is($result, $expected, 'Created cluster table for A, G, and H cluster files');
 }
 
+unlink('H.cluster.fa');
 
 done;
 
@@ -86,6 +91,11 @@ sub create_file ($filename)
     my $text = text($filename);
     spurt($filename, $text);
     return;
+}
+
+sub delete_file_if_exists ($filename)
+{
+    unlink $filename if ( $filename.IO.e);
 }
 
 #! Text "files" for use in testing
@@ -135,13 +145,28 @@ when 'G.cluster.fa' { return q:to/END/;
     END
 }
 
+when 'H.cluster.fa' { return q:to/END/;
+
+    >1-40-50-1-1-0
+    RQMSHKIAPTVCWLNEFGDY
+    >42-8-8-1-2-1
+    RQMSHKIAPTVDWLNEFGDY
+    >789-5-5-2-1-0
+    SWCFYMQPNGELIHKVTADR
+    >855-2-2-3-1-0
+    LNVWEFDSQIHKATYCMRPG
+    END
+}
+
 when 'cluster_table' { return q:to/END/;
 
-    seed sequence	A	G
-    RQMSHKIAPTVCWLNEFGDY	133	66
-    KLHNAIYFWCMQTPDVERGS	77	49
-    CHTVFYILNWGEMSDQAKRP	2	-
-    DIATEGPKSRMCQHFWLNYV	-	196
+    seed sequence	A	G	H
+    RQMSHKIAPTVCWLNEFGDY	133	66	48
+    KLHNAIYFWCMQTPDVERGS	77	49	-
+    CHTVFYILNWGEMSDQAKRP	2	-	-
+    DIATEGPKSRMCQHFWLNYV	-	196	-
+    SWCFYMQPNGELIHKVTADR	-	-	5
+    LNVWEFDSQIHKATYCMRPG	-	-	2
     END
 }
 

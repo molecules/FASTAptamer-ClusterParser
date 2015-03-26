@@ -1,3 +1,5 @@
 0.0001 Initial commit
 
 0.0002 Made FASTAptamer::ClusterParser a modulino with an official module declaration. Fixed bug that would omit '-' from missing data for all but the first filename.
+
+0.0003 Handles more than two cluster files now
