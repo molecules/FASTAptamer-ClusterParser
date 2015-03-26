@@ -8,6 +8,8 @@ use File::Temp;
 
 chdir 't/data';
 
+create_file('A.cluster.fa');
+
 {
     my @filenames          = < howdy.1.abc.txt bye.2.abc.txt>;
     my @expected_basenames = <howdy bye>;
@@ -60,8 +62,9 @@ done;
 
 sub expected_cluster_info
 {
-    return  %( 'RQMSHKIAPTVCWLNEFGDY' => 133,
-               'KLHNAIYFWCMQTPDVERGS' =>  77,
+    return  %(  RQMSHKIAPTVCWLNEFGDY => 133,
+                KLHNAIYFWCMQTPDVERGS =>  77,
+                CHTVFYILNWGEMSDQAKRP =>   2,
             );
 }
 
@@ -71,70 +74,23 @@ sub expected_item_info
                 RQMSHKIAPTVDWLNEFGDY =>  14, 
                 RQMSHKIAPTVCWLPEFGDY =>  10, 
                 RQMSHKIAPTVCWLNEFGDW =>   9, 
+                CHTVFYILNWGEMSDQAKRP =>   2,
                 KLHNAIYFWCMQTPDVERGS =>  70, 
                 KMIPAIYFWCMQTPDVFSHS =>   7, 
            );
 }
 
-sub expected_clusters_A 
-{
-    return %(
-        1 => %(
-            RQMSHKIAPTVCWLNEFGDY => 100,
-            RQMSHKIAPTVDWLNEFGDY =>  14,
-            RQMSHKIAPTVCWLPEFGDY =>  10,
-            RQMSHKIAPTVCWLNEFGDW =>   9,
-            total                => 133,
-        ),
-        2 => %( 
-            KLHNAIYFWCMQTPDVERGS => 70,
-            KMIPAIYFWCMQTPDVFSHS =>  7,
-            total                => 77,
-        ),
-    );
-}
         
-sub expected_seq_based_clusters_A
+sub create_file ($filename)
 {
-    return %(
-        1 => %(
-            RQMSHKIAPTVCWLNEFGDY => 100,
-            RQMSHKIAPTVDWLNEFGDY =>  14,
-            RQMSHKIAPTVCWLPEFGDY =>  10,
-            RQMSHKIAPTVCWLNEFGDW =>   9,
-        ),
-        2 => %( 
-            KLHNAIYFWCMQTPDVERGS => 70,
-            KMIPAIYFWCMQTPDVFSHS =>  7,
-        ),
-    );
-}
-
-sub expected_clusters_G 
-{
-    return %(
-        1 => %(
-            RQMSHKIAPTVCWLNEFGDY =>  50,
-            RQMSHKIAPTVDWLNEFGDY =>   7,
-            RQMSHKIAPTVCWLPEFGDY =>   5,
-            RQMSHKIAPTVCWLNEFGDW =>   4,
-            total                =>  66,
-        ),
-        3 => %( 
-            KLHNAIYFWCMQTPDVERGS => 42,
-            KMIPAIYFWCMQTPDVFSHS =>  7,
-            total                => 49,
-        ),
-        2 => %( 
-            DIATEGPKSRMCQHFWLNYV => 179,
-            DIATFGPKSRMDRHFWLNYV =>  17,
-            total                => 196,
-        ),
-    );
+    my $text = text($filename);
+    spurt($filename, $text);
+    return;
 }
 
 #! Text "files" for use in testing
-sub text ($name) {
+sub text ($name)
+{
     given $name {
 
 # Reduced indentation to avoid warnings
@@ -153,6 +109,8 @@ when 'A.cluster.fa' { return q:to/END/;
     KLHNAIYFWCMQTPDVERGS
     >996-7-7-2-2-6
     KMIPAIYFWCMQTPDVFSHS
+    >2999-2-2-3-1-0
+    CHTVFYILNWGEMSDQAKRP
     END
 }
 
@@ -182,6 +140,7 @@ when 'cluster_table' { return q:to/END/;
     seed sequence	A	G
     RQMSHKIAPTVCWLNEFGDY	133	66
     KLHNAIYFWCMQTPDVERGS	77	49
+    CHTVFYILNWGEMSDQAKRP	2	-
     DIATEGPKSRMCQHFWLNYV	-	196
     END
 }
