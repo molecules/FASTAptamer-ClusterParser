@@ -1,4 +1,4 @@
-# FASTAptamer-ClusterParser (Perl 6 module)
+# FASTAptamer-ClusterParser (Perl 6)
 Parse cluster.fa files output by fastaptamer_cluster from FASTAptamer suite
 
 # SYNOPSIS
