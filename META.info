@@ -1,0 +1,8 @@
+{
+    "name" : "FASTAptamer::ClusterParser",
+    "version" : "0.00001",
+    "description" : "Parse cluster.fa files output by fastaptamer_cluster from FASTAptamer suite",
+    "author" : "Christopher Bottoms",
+    "depends" : [ ],
+    "source-url" : "git://github.com/molecules/FASTAptamer-ClusterParser"
+}
