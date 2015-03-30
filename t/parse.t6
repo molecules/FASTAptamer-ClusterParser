@@ -8,14 +8,27 @@ use File::Temp;
 
 chdir 't/data';
 
-create_file('A.cluster.fa');
+my $filename_A = 'A.cluster.fa';
+my $filename_G = 'G.cluster.fa';
+
+create_file($filename_A);
+create_file($filename_G);
 
 delete_file_if_exists('H.cluster.fa');
 
 {
+   my $output_filename = 'my_temporary_output.txt';
+   shell("perl6 ../../lib/FASTAptamer/ClusterParser.pm6 $filename_A $filename_G > $output_filename");
+   my $result   = slurp $output_filename;
+   my $expected = text('cluster_table_AG');
+   is( $result, $expected, 'successfully created cluster_table from the command line' );
+   unlink $output_filename;
+}
+
+{
     my @filenames          = < howdy.1.abc.txt bye.2.abc.txt>;
     my @expected_basenames = <howdy bye>;
-    my @result             = basenames(@filenames); 
+    my @result             = basenames(@filenames);
     is_deeply(@result, @expected_basenames,'basenames works');
 }
 
@@ -75,17 +88,17 @@ sub expected_cluster_info
 
 sub expected_item_info
 {
-    return %(   RQMSHKIAPTVCWLNEFGDY => 100, 
-                RQMSHKIAPTVDWLNEFGDY =>  14, 
-                RQMSHKIAPTVCWLPEFGDY =>  10, 
-                RQMSHKIAPTVCWLNEFGDW =>   9, 
+    return %(   RQMSHKIAPTVCWLNEFGDY => 100,
+                RQMSHKIAPTVDWLNEFGDY =>  14,
+                RQMSHKIAPTVCWLPEFGDY =>  10,
+                RQMSHKIAPTVCWLNEFGDW =>   9,
                 CHTVFYILNWGEMSDQAKRP =>   2,
-                KLHNAIYFWCMQTPDVERGS =>  70, 
-                KMIPAIYFWCMQTPDVFSHS =>   7, 
+                KLHNAIYFWCMQTPDVERGS =>  70,
+                KMIPAIYFWCMQTPDVFSHS =>   7,
            );
 }
 
-        
+
 sub create_file ($filename)
 {
     my $text = text($filename);
@@ -167,6 +180,16 @@ when 'cluster_table' { return q:to/END/;
     DIATEGPKSRMCQHFWLNYV	-	196	-
     SWCFYMQPNGELIHKVTADR	-	-	5
     LNVWEFDSQIHKATYCMRPG	-	-	2
+    END
+}
+
+when 'cluster_table_AG' { return q:to/END/;
+
+    seed sequence	A	G
+    RQMSHKIAPTVCWLNEFGDY	133	66
+    KLHNAIYFWCMQTPDVERGS	77	49
+    CHTVFYILNWGEMSDQAKRP	2	-
+    DIATEGPKSRMCQHFWLNYV	-	196
     END
 }
 

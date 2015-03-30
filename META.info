@@ -1,6 +1,6 @@
 {
     "name" : "FASTAptamer::ClusterParser",
-    "version" : "0.00003",
+    "version" : "0.0004",
     "description" : "Parse cluster.fa files output by fastaptamer_cluster from FASTAptamer suite",
     "author" : "Christopher Bottoms",
     "depends" : [ ],
